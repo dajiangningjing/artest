@@ -38,7 +38,8 @@
 
 		<script src="js/Detector.js"></script>
 		<script src="js/libs/stats.min.js"></script>
-		<script src="./POI.js"></script>
+        <script src="./POI.js"></script>
+        <script src="./geodecy.js"></script>  //84坐标系转笛卡尔坐标系
 
 		<script>
 
@@ -66,14 +67,7 @@
 				controls.target.set( 0, -0.2, -0.2 );
 				controls.update();
 
-				// envmap
-				var path = 'textures/cube/Bridge2/';
-				var format = '.jpg';
-				var envMap = new THREE.CubeTextureLoader().load( [
-					path + 'posx' + format, path + 'negx' + format,
-					path + 'posy' + format, path + 'negy' + format,
-					path + 'posz' + format, path + 'negz' + format
-				] );
+			
 
 				scene = new THREE.Scene();
 				scene.background = envMap;
@@ -93,7 +87,7 @@
 							var texture =  THREE.ImageUtils.loadTexture( './gltf/Charging.jpg');
 							texture.flipY=false;
 							child.material.map = texture;
-							child.material.envMap = envMap;
+							//child.material.envMap = envMap;
 						}
 
 					} );
@@ -147,14 +141,6 @@
 				}
 
 			}
-
-
-
-			function GeodeticToCartesian(){
-
-			}
-
-			
 
 		</script>
 
