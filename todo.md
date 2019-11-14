@@ -11,3 +11,10 @@ GeodeticToCartesian
 2. 设置three中对应camera和POI的信息， 通过three获得相应矩阵
 
 3. 展示POI
+
+
+
+
+
+tomcat apahce 
+webroot: http://localhost:8080/threejs/examples/webgl_loader_gltf2.html
