@@ -15,21 +15,21 @@ GeodeticToCartesian
 3. 展示POI
 
 
-
-Q. 世界坐标换算为屏幕坐标
-
-如何获得屏幕2d坐标?
+S. 世界坐标换算为屏幕坐标
 
 ```p.project(camera);```
 
+S. three.js camera水平旋转
 
+
+
+Qlist
+
+Q. 物体绕一个固定向量旋转
 
 Q. canvas或webgl生成标签, 记录位置, 编辑修正位置
 
 Q. camera接入web； 云台控制； 云台旋转修正
-
-Q. three.js camera如何旋转
-
 
 
 

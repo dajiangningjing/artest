@@ -55,6 +55,8 @@
         var container, stats, controls;
         var camera, scene, renderer, light;
         var mixer = null;
+        var deg = 0;
+        var t0;
 
         var clock = new THREE.Clock();
 
@@ -65,6 +67,7 @@
         animate();
 
         function init() {
+            t0 = new Date();
 
             container = document.createElement('div');
             document.body.appendChild(container);
@@ -75,8 +78,18 @@
 
 
             scene = new THREE.Scene();
-            //	scene.background = envMap;
-            scene.background = new THREE.Color(0, 0, 0);
+
+            // envmap
+            var path = 'textures/cube/Bridge2/';
+            var format = '.jpg';
+            var envMap = new THREE.CubeTextureLoader().load([
+                path + 'posx' + format, path + 'negx' + format,
+                path + 'posy' + format, path + 'negy' + format,
+                path + 'posz' + format, path + 'negz' + format
+            ]);
+
+            scene = new THREE.Scene();
+            scene.background = envMap;
 
             light = new THREE.HemisphereLight(0xbbbbff, 0x444422);
             light.position.set(0, 1, 0);
@@ -122,6 +135,47 @@
             stats = new Stats();
             container.appendChild(stats.dom);
 
+            window.addEventListener('keydown', keyPressed, false);
+            window.addEventListener('keyup', keyUp, false);
+
+        }
+
+        var onoff = 0;
+        var h, v;
+
+        function keyUp(e) {
+            //     console.log('key up');
+            onoff = 0;
+            v = h = 0;
+        }
+
+
+        function keyPressed(e) {
+            // console.log('key press');
+            onoff = 1;
+            var key = event.keyCode;
+            switch (key) {
+
+                case 87:
+                    /*w*/
+                    v = 1;
+                    break;
+
+                case 65:
+                    /*a*/
+                    h = 1;
+                    break;
+
+                case 83:
+                    /*s*/
+                    v = -1;
+                    break;
+                case 68:
+                    /*d*/
+                    h = -1;
+
+                    break;
+            }
         }
 
         function onWindowResize() {
@@ -135,6 +189,8 @@
 
         //
 
+
+
         function animate() {
 
             requestAnimationFrame(animate);
@@ -146,13 +202,34 @@
                 mixer.update(delta);
             }
 
-            //    toScreenPos(POIs.cameras[0].pos);
+
 
             // 2d屏幕的POI位置
-            var vec = new THREE.Vector3(POIs.tags[1].pos.x, POIs.tags[1].pos.y,
-                POIs.tags[1].pos.z);
+            var vec = new THREE.Vector3(POIs.tags[0].pos.x, POIs.tags[0].pos.y,
+                POIs.tags[0].pos.z);
             vec.project(camera);
-            console.log(vec);
+            //  console.log('0', vec);
+
+
+            let t1 = new Date(); //本次时间
+            let t = t1 - t0; // 时间差
+            if (onoff == 1) {
+                if (v != 0) {
+                    camera.rotateX(v * 0.001 * t / 3);
+                }
+                if (h != 0) {
+                    camera.rotateY(h * 0.001 * t / 3);
+
+
+                    // camera.lookAt(scene.position);
+
+                }
+
+            }
+
+            t0 = t1;
+
+            //  console.log(camera.rotation);
 
         }
 
@@ -193,7 +270,7 @@
         function addPOI(poi_array) {
 
             const SCALE = 1;
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.25, 8000);
+            camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.25, 8000);
             var poi_cam = POIs.cameras[0];
 
             camera.position.set(poi_cam.pos.x / SCALE, poi_cam.pos.y / SCALE, poi_cam.pos.z / SCALE);
