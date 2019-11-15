@@ -1,148 +1,342 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<title>three.js webgl - glTF loader</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<style>
-			body {
-				font-family: Monospace;
-				background-color: #000;
-				color: #fff;
-				margin: 0px;
-				overflow: hidden;
-			}
-			#info {
-				color: #fff;
-				position: absolute;
-				top: 10px;
-				width: 100%;
-				text-align: center;
-				z-index: 100;
-				display:block;
-			}
-			#info a {
-				color: #75ddc1;
-				font-weight: bold;
-			}
-		</style>
-	</head>
 
-	<body>
-	
+<head>
+    <title>three.js webgl - glTF loader</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body {
+            font-family: Monospace;
+            background-color: #000;
+            color: #fff;
+            margin: 0px;
+            overflow: hidden;
+        }
 
-		<script src="../build/three.js"></script>
+        #info {
+            color: #fff;
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            z-index: 100;
+            display: block;
+        }
 
-		<script src="js/controls/OrbitControls.js"></script>
-		<script src="js/loaders/GLTFLoader.js"></script>
+        #info a {
+            color: #75ddc1;
+            font-weight: bold;
+        }
+    </style>
+</head>
 
-		<script src="js/Detector.js"></script>
-		<script src="js/libs/stats.min.js"></script>
-        <script src="./POI.js"></script>
-        <script src="./geodecy.js"></script>  //84坐标系转笛卡尔坐标系
+<body>
 
-		<script>
 
-			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+    <script src="../build/three.js"></script>
 
-			var container, stats, controls;
-			var camera, scene, renderer, light;
-			var mixer= null;
-			
-			var clock = new THREE.Clock();
-			console.log(POIs);
-			
-			init();
-			animate();
+    <script src="js/controls/OrbitControls.js"></script>
+    <script src="js/loaders/GLTFLoader.js"></script>
 
-			function init() {
+    <script src="js/Detector.js"></script>
+    <script src="js/libs/stats.min.js"></script>
 
-				container = document.createElement( 'div' );
-				document.body.appendChild( container );
+    <!-- 兴趣点数据 -->
+    <script src="./POI.js"></script>
 
-				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.25, 20 );
-				camera.position.set( -1.8, 0.9, 2.7 );
+    <!-- 84坐标系转笛卡尔坐标系 -->
+    <script src="./geodecy.js"></script>
 
-				controls = new THREE.OrbitControls( camera );
-				controls.target.set( 0, -0.2, -0.2 );
-				controls.update();
 
-			
+    <script>
+        if (!Detector.webgl) Detector.addGetWebGLMessage();
 
-				scene = new THREE.Scene();
-				scene.background = envMap;
+        var container, stats, controls;
+        var camera, scene, renderer, light;
+        var mixer = null;
 
-				light = new THREE.HemisphereLight( 0xbbbbff, 0x444422 );
-				light.position.set( 0, 1, 0 );
-				scene.add( light );
+        var clock = new THREE.Clock();
 
-				// model
+        console.log(POIs);
+        processPOIs(POIs);
 
-				var loader = new THREE.GLTFLoader();
-				loader.load( './gltf/congdianzhuang_out/congdianzhuang.gltf', function ( gltf ) {
+        init();
+        animate();
 
-					gltf.scene.traverse( function ( child ) {
+        function init() {
 
-						if ( child.isMesh ) {
-							var texture =  THREE.ImageUtils.loadTexture( './gltf/Charging.jpg');
-							texture.flipY=false;
-							child.material.map = texture;
-							//child.material.envMap = envMap;
-						}
+            container = document.createElement('div');
+            document.body.appendChild(container);
 
-					} );
 
-					scene.add( gltf.scene );
 
-					mixer = new THREE.AnimationMixer(gltf.scene);
-					//mixer.clipAction( gltf.animations[ 0 ])
-					mixer.clipAction( gltf.animations[ 0 ]).loop = THREE.LoopOnce; 
-					mixer.clipAction( gltf.animations[ 0 ] ).play();
-					
-				} );
 
-				renderer = new THREE.WebGLRenderer( { antialias: true } );
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.gammaOutput = true;
-				container.appendChild( renderer.domElement );
 
-				window.addEventListener( 'resize', onWindowResize, false );
 
-				// stats
-				stats = new Stats();
-				container.appendChild( stats.dom );
+            scene = new THREE.Scene();
+            //	scene.background = envMap;
+            scene.background = new THREE.Color(0, 0, 0);
 
-			}
+            light = new THREE.HemisphereLight(0xbbbbff, 0x444422);
+            light.position.set(0, 1, 0);
+            scene.add(light);
 
-			function onWindowResize() {
 
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
+            // model
 
-				renderer.setSize( window.innerWidth, window.innerHeight );
+            var loader = new THREE.GLTFLoader();
+            loader.load('./gltf/congdianzhuang_out/congdianzhuang.gltf', function (gltf) {
 
-			}
+                gltf.scene.traverse(function (child) {
 
-			//
+                    if (child.isMesh) {
+                        //   var texture = THREE.ImageUtils.loadTexture('./gltf/Charging.jpg');
+                        //   texture.flipY = false;
+                        //   child.material.map = texture;
+                        //child.material.envMap = envMap;
+                    }
 
-			function animate() {
+                });
 
-				requestAnimationFrame( animate );
+                scene.add(gltf.scene);
 
-				renderer.render( scene, camera );
+                mixer = new THREE.AnimationMixer(gltf.scene);
+                //mixer.clipAction( gltf.animations[ 0 ])
+                mixer.clipAction(gltf.animations[0]).loop = THREE.LoopOnce;
+                //  mixer.clipAction(gltf.animations[0]).play();
 
-				stats.update();
-				
+            });
 
-				var delta = clock.getDelta();
-				if (mixer != null){
-					mixer.update(delta);
-				}
+            renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.gammaOutput = true;
+            container.appendChild(renderer.domElement);
 
-			}
+            window.addEventListener('resize', onWindowResize, false);
+            addPOI(POIs);
+            // stats
+            stats = new Stats();
+            container.appendChild(stats.dom);
 
-		</script>
+        }
 
-	</body>
+        function onWindowResize() {
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+        }
+
+        //
+
+        function animate() {
+
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+            stats.update();
+
+            var delta = clock.getDelta();
+            if (mixer != null) {
+                mixer.update(delta);
+            }
+
+            //    toScreenPos(POIs.cameras[0].pos);
+
+            // 2d屏幕的POI位置
+            var vec = new THREE.Vector3(POIs.tags[1].pos.x, POIs.tags[1].pos.y,
+                POIs.tags[1].pos.z);
+            vec.project(camera);
+            console.log(vec);
+
+        }
+
+        // 坐标系转换 84 -> 笛卡尔
+        function processPOIs(poi_array) {
+
+            // 相机笛卡尔坐标系
+            for (let i = 0; i < poi_array.cameras.length; i++) {
+                //console.log(poi_array.cameras[i]);
+                var cam = poi_array.cameras[i];
+
+                var pos = millerXY(cam.lon, cam.lat)
+
+                cam.pos.x = pos.x; // x
+                cam.pos.z = pos.y; // z<=y
+                cam.pos.y = cam.height; // y<=z
+
+                console.log(cam.pos);
+
+            }
+
+            // tag点笛卡尔坐标系
+            for (let i = 0; i < poi_array.tags.length; i++) {
+                //console.log(poi_array.cameras[i]); var
+                tag = poi_array.tags[i];
+
+                var pos = millerXY(tag.lon, tag.lat);
+
+                tag.pos.x = pos.x; // x
+                tag.pos.z = pos.y; // z<=y 
+                tag.pos.y = tag.height; // y<=z 
+
+                console.log(tag.pos);
+            }
+        }
+
+        // add POI in scene
+        function addPOI(poi_array) {
+
+            const SCALE = 1;
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.25, 8000);
+            var poi_cam = POIs.cameras[0];
+
+            camera.position.set(poi_cam.pos.x / SCALE, poi_cam.pos.y / SCALE, poi_cam.pos.z / SCALE);
+
+
+            camera.lookAt(new THREE.Vector3(poi_array.tags[0].pos.x / SCALE, poi_array.tags[0].pos.y / SCALE,
+                poi_array.tags[0].pos.z / SCALE));
+
+            console.log('addcam:', poi_cam.pos.x / SCALE, poi_cam.pos.y / SCALE, poi_cam.pos.z / SCALE)
+
+
+            for (let i = 0; i < poi_array.tags.length; i++) {
+                var tag = poi_array.tags[i];
+
+                var geometry = new THREE.BoxGeometry(1, 1, 1);
+                var material = new THREE.MeshBasicMaterial({
+                    color: 0xffff7c,
+                    //wireframe: true,
+                    wireframeLinewidth: 1
+                });
+                var cube = new THREE.Mesh(geometry, material);
+                cube.position.set(tag.pos.x / SCALE, tag.pos.y / SCALE, tag.pos.z / SCALE);
+                console.log('addtag:', tag.pos.x / SCALE, tag.pos.y / SCALE, tag.pos.z / SCALE)
+                scene.add(cube);
+
+                var spritey = makeTextSprite(tag.text, {
+                    fontsize: 22,
+                    fontface: "Georgia",
+                    borderColor: {
+                        r: 0,
+                        g: 0,
+                        b: 255,
+                        a: 1.0
+                    }
+                });
+                spritey.position.set(tag.pos.x / SCALE, tag.pos.y / SCALE, tag.pos.z / SCALE);
+                scene.add(spritey);
+            }
+
+
+        }
+
+        function makeTextSprite(message, parameters) {
+            if (parameters === undefined) parameters = {};
+            var fontface = parameters.hasOwnProperty("fontface") ? parameters["fontface"] : "Arial";
+            var fontsize = parameters.hasOwnProperty("fontsize") ? parameters["fontsize"] : 18;
+            var borderThickness = parameters.hasOwnProperty("borderThickness") ? parameters["borderThickness"] : 4;
+            var borderColor = parameters.hasOwnProperty("borderColor") ? parameters["borderColor"] : {
+                r: 0,
+                g: 0,
+                b: 0,
+                a: 1.0
+            };
+            var backgroundColor = parameters.hasOwnProperty("backgroundColor") ? parameters["backgroundColor"] : {
+                r: 255,
+                g: 255,
+                b: 255,
+                a: 1.0
+            };
+            var textColor = parameters.hasOwnProperty("textColor") ? parameters["textColor"] : {
+                r: 255,
+                g: 1,
+                b: 1,
+                a: 1.0
+            };
+
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            context.font = "Bold " + fontsize + "px " + fontface;
+            var metrics = context.measureText(message);
+            var textWidth = metrics.width;
+
+            context.fillStyle = "rgba(" + backgroundColor.r + "," + backgroundColor.g + "," + backgroundColor.b +
+                "," +
+                backgroundColor.a + ")";
+            context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + "," + borderColor.b + "," +
+                borderColor.a +
+                ")";
+
+            context.lineWidth = borderThickness;
+            /* roundRect(context, borderThickness / 2, borderThickness / 2, (textWidth + borderThickness) * 1.1, fontsize *
+                1.4 +
+                borderThickness, 8);
+*/
+            context.fillStyle = "rgba(" + textColor.r + ", " + textColor.g + ", " + textColor.b + ", 1.0)";
+            context.fillText(message, borderThickness, fontsize + borderThickness);
+
+            var texture = new THREE.Texture(canvas)
+            texture.needsUpdate = true;
+
+            var spriteMaterial = new THREE.SpriteMaterial({
+                map: texture,
+                // useScreenCoordinates: false
+            });
+            var sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(0.5 * fontsize, 0.25 * fontsize, 0.75 * fontsize);
+            return sprite;
+        }
+
+        // lon 经度，西经为负数
+        // lat 纬度，南纬是负数
+        function millerXY(lon, lat) {
+
+            var L = 6381372 * Math.PI * 2, // 地球周长
+                W = L, // 平面展开后，x轴等于周长
+                H = L / 2, // y轴约等于周长一半
+                mill = 2.3, // 米勒投影中的一个常数，范围大约在正负2.3之间
+                x = lon * Math.PI / 180, // 将经度从度数转换为弧度
+                y = lat * Math.PI / 180; // 将纬度从度数转换为弧度
+
+            // 这里是米勒投影的转换
+            y = 1.25 * Math.log(Math.tan(0.25 * Math.PI + 0.4 * y));
+
+            // 这里将弧度转为实际距离
+            x = (W / 2) + (W / (2 * Math.PI)) * x;
+            y = (H / 2) - (H / (2 * mill)) * y;
+            // 转换结果的单位是公里
+            // 可以根据此结果，算出在某个尺寸的画布上，各个点的坐标
+
+            return {
+                x: x,
+                y: y
+            };
+
+        }
+
+        function toScreenPos(vec) {
+            var p = new THREE.Vector3(vec.x, vec.y, vec.z);
+            //   console.log(p);
+
+            var vector = p.project(camera);
+
+            console.log(vector);
+
+            vector.x = (vector.x + 1) / 2 * renderer.context.canvas.width;
+            vector.y = -(vector.y - 1) / 2 * renderer.context.canvas.height;
+            //console.log(renderer.context.canvas);
+
+            console.log('screen pos:', vector);
+            return vector;
+        }
+    </script>
+
+</body>
+
 </html>

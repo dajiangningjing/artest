@@ -8,9 +8,29 @@
 1. POI经纬度转笛卡尔坐标系
 GeodeticToCartesian
 
+    > 米勒投影算法
+
 2. 设置three中对应camera和POI的信息， 通过three获得相应矩阵
 
 3. 展示POI
+
+
+
+Q. 世界坐标换算为屏幕坐标
+
+如何获得屏幕2d坐标?
+
+```p.project(camera);```
+
+
+
+Q. canvas或webgl生成标签, 记录位置, 编辑修正位置
+
+Q. camera接入web； 云台控制； 云台旋转修正
+
+Q. three.js camera如何旋转
+
+
 
 
 
