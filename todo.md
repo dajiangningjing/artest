@@ -15,17 +15,17 @@ GeodeticToCartesian
 3. 展示POI
 
 
+## SList
+
 S. 世界坐标换算为屏幕坐标
 
 ```p.project(camera);```
 
-S. three.js camera水平旋转
 
 
+## Qlist
 
-Qlist
-
-Q. 物体绕一个固定向量旋转
+Q. three.js 模拟云台旋转方式. 物体绕一个固定向量旋转
 
 Q. canvas或webgl生成标签, 记录位置, 编辑修正位置
 
