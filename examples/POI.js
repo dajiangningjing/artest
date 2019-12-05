@@ -15,6 +15,10 @@ var POIs = {
                 y: 0,
                 z: 0
             },
+            north: {
+                lon: 111,
+                lat: 111,
+            }
         },
     ],
 
