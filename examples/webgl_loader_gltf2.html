@@ -138,7 +138,7 @@
         }
 
         var onoff = 0;
-        var h, v;
+        var h=0,v=0;
 
         function keyUp(e) {
             //     console.log('key up');
@@ -216,18 +216,12 @@
                 }
                 if (h != 0) {
                     camera.rotateY(h * 0.001 * t / 3);
-
-
                     // camera.lookAt(scene.position);
-
                 }
 
             }
-
             t0 = t1;
-
             //  console.log(camera.rotation);
-
         }
 
         // 坐标系转换 84 -> 笛卡尔
