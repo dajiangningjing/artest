@@ -6,7 +6,7 @@ var POIs = {
 
             lon: 121.3890916802,      // Decimal Degrees 
             lat: 31.0867853451,     // Decimal Degrees
-            height: 10.0, // m
+            height: 20.0, // m
             pitch: 2,
             yaw: 2,
             type: 'm',  //球机
