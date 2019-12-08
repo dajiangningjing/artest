@@ -4,9 +4,9 @@ var POIs = {
         {
 
 
-            lon: 102.0270354539,      // Decimal Degrees 
-            lat: 36.5158222727,     // Decimal Degrees
-            height: 0.0, // m
+            lon: 121.3894355058,      // Decimal Degrees 
+            lat: 31.0863135059,     // Decimal Degrees
+            height: 20.0, // m
             pitch: 2,
             yaw: 2,
             type: 'm',  //球机
@@ -24,10 +24,10 @@ var POIs = {
 
     tags: [
         {
-            lon: 102.0240735987,
-            lat: 36.5161305910,
+            lon: 121.3894265058,
+            lat: 31.086781505,
             height: 0,
-            text: 'this is A',
+            text: 'this is n',
             pos: {
                 x: 0,
                 y: 0,
@@ -35,10 +35,10 @@ var POIs = {
             }
         },
         {
-            lon: 102.0272929460,
-            lat: 36.5165810652,
+            lon: 121.3906345058,
+            lat: 31.0864295059,
             height: 0,
-            text: 'this is B',
+            text: 'this is e',
             pos: {
                 x: 0,
                 y: 0,
@@ -46,10 +46,21 @@ var POIs = {
             }
         },
         {
-            lon: 102.0284087449,
-            lat: 36.5162706510,
+            lon: 121.3894895058,
+            lat: 31.0855135059,
             height: 0,
-            text: 'this is C',
+            text: 'this is s',
+            pos: {
+                x: 0,
+                y: 0,
+                z: 0
+            }
+        },
+        {
+            lon: 121.3887355058,
+            lat: 31.0862705059,
+            height: 0,
+            text: 'this is w',
             pos: {
                 x: 0,
                 y: 0,
@@ -63,3 +74,10 @@ var POIs = {
 
 
 
+
+
+31.0863135059, 121.3894355058
+31.0867815059, 121.3894265058 
+31.0864295059, 121.3906345058
+31.0855135059, 121.3894895058
+31.0862705059, 121.3887355058

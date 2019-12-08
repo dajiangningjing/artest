@@ -48,6 +48,8 @@
     <!-- 84坐标系转笛卡尔坐标系 -->
     <script src="./geodecy.js"></script>
 
+    <script src="http://libs.baidu.com/jquery/1.9.1/jquery.js"></script>
+
 
     <script>
         if (!Detector.webgl) Detector.addGetWebGLMessage();
@@ -63,8 +65,33 @@
         console.log(POIs);
         processPOIs(POIs);
 
+
+/*
+      
+*/      
+
+       
+
+        hw_gotoHomePosition();
+
         init();
         animate();
+
+        function hw_gotoHomePosition(){
+              var url= 'http://127.0.0.1:3000/gotoHomePosition'
+              $.get(url, (data, status)=>{
+              console.log(data);
+              })
+        }
+
+        function hw_continuousMove(xspeed, yspeed, zoom, callback){
+             var url= `http://127.0.0.1:3000/continuousMove?xspeed=${xspeed}&yspeed=${yspeed}&zoom=${zoom}`
+             $.get(url, (data, status)=>{
+                if(callback){
+                    callback(data);
+                }
+             })
+        }
 
         function init() {
             t0 = new Date();
@@ -94,7 +121,7 @@
 
 
             // model
-
+/*
             var loader = new THREE.GLTFLoader();
             loader.load('./gltf/congdianzhuang_out/congdianzhuang.gltf', function (gltf) {
 
@@ -117,6 +144,7 @@
                 //  mixer.clipAction(gltf.animations[0]).play();
 
             });
+*/
 
             renderer = new THREE.WebGLRenderer({
                 antialias: true
@@ -162,6 +190,14 @@
                 case 65:
                     /*a*/
                     h = 1;
+                    hw_continuousMove(1,0,0,data=>{
+                        console.log(data.position.x*180);
+                         gotoHomePosition();
+                         rotDeltaByworldY(-data.position.x*180);
+                        
+                    });
+                    //rotDeltaByworldY(-1);
+
                     break;
 
                 case 83:
@@ -171,9 +207,39 @@
                 case 68:
                     /*d*/
                     h = -1;
+                    hw_continuousMove(-1,0,0,data=>{
+                        console.log(data.position.x*180);
+                        gotoHomePosition();
+                        rotDeltaByworldY(-data.position.x*180);
+                    });
+                    //rotDeltaByworldY(1);          
 
                     break;
+                case 82:
+                    //reset
+                    gotoHomePosition();
+                    break;
             }
+        }
+
+        /*
+        * 水平转动
+        * degree -180~180
+        * 右手坐标系, 逆时针转动为正 
+        */
+        function rotDeltaByworldY(degree){
+               var quaternion= new THREE.Quaternion();
+               quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0), degInRad(degree));
+               camera.quaternion.multiplyQuaternions(quaternion, camera.quaternion);
+               console.log(eulerToAngle(quatToEuler(camera.quaternion).y))
+
+        }
+        /**
+        * 回到初始位置, POI tag0 默认为正北方向
+        */ 
+        function gotoHomePosition(){
+             camera.lookAt(new THREE.Vector3(POIs.tags[0].pos.x , POIs.tags[0].pos.y ,
+             POIs.tags[0].pos.z ));
         }
 
         function onWindowResize() {
@@ -186,7 +252,6 @@
         }
 
         //
-
         function degInRad(deg) {
             return deg * Math.PI / 180;
         }
@@ -254,7 +319,6 @@
             }
 
 
-
             // 2d屏幕的POI位置
             var vec = new THREE.Vector3(POIs.tags[0].pos.x, POIs.tags[0].pos.y,
                 POIs.tags[0].pos.z);
@@ -269,15 +333,19 @@
                     camera.rotateX(v * 0.001 * t / 3);
                 }
                 if (h != 0) {
+
                     //  camera.rotateY(h * 0.001 * t / 3);
-                    camera.rotateOnAxis(new THREE.Vector3(0, 1, 0),h* degInRad(0.5));
+                //    camera.rotateOnAxis(new THREE.Vector3(0, 1, 0),h* degInRad(0.5));
                     // camera.lookAt(scene.position);
+
+                     var quaternion= new THREE.Quaternion();
+                     quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0), h*t*Math.PI/2000);
+                     camera.quaternion.multiplyQuaternions(quaternion, camera.quaternion);
                 }
 
             }
             t0 = t1;
             //  console.log(camera.rotation);
-            console.log(eulerToAngle(quatToEuler(camera.quaternion).y))
         }
 
         // 坐标系转换 84 -> 笛卡尔
