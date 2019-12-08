@@ -59,6 +59,7 @@
         var mixer = null;
         var deg = 0;
         var t0;
+        const CONTROL_VCAM_DIRECT = true;
 
         var clock = new THREE.Clock();
 
@@ -66,31 +67,31 @@
         processPOIs(POIs);
 
 
-/*
-      
-*/      
+        /*
+              
+        */
 
-       
+
 
         hw_gotoHomePosition();
 
         init();
         animate();
 
-        function hw_gotoHomePosition(){
-              var url= 'http://127.0.0.1:3000/gotoHomePosition'
-              $.get(url, (data, status)=>{
-              console.log(data);
-              })
+        function hw_gotoHomePosition() {
+            var url = 'http://127.0.0.1:3000/gotoHomePosition'
+            $.get(url, (data, status) => {
+                console.log(data);
+            })
         }
 
-        function hw_continuousMove(xspeed, yspeed, zoom, callback){
-             var url= `http://127.0.0.1:3000/continuousMove?xspeed=${xspeed}&yspeed=${yspeed}&zoom=${zoom}`
-             $.get(url, (data, status)=>{
-                if(callback){
+        function hw_continuousMove(xspeed, yspeed, zoom, callback) {
+            var url = `http://127.0.0.1:3000/continuousMove?xspeed=${xspeed}&yspeed=${yspeed}&zoom=${zoom}`
+            $.get(url, (data, status) => {
+                if (callback) {
                     callback(data);
                 }
-             })
+            })
         }
 
         function init() {
@@ -121,30 +122,30 @@
 
 
             // model
-/*
-            var loader = new THREE.GLTFLoader();
-            loader.load('./gltf/congdianzhuang_out/congdianzhuang.gltf', function (gltf) {
+            /*
+                        var loader = new THREE.GLTFLoader();
+                        loader.load('./gltf/congdianzhuang_out/congdianzhuang.gltf', function (gltf) {
 
-                gltf.scene.traverse(function (child) {
+                            gltf.scene.traverse(function (child) {
 
-                    if (child.isMesh) {
-                        //   var texture = THREE.ImageUtils.loadTexture('./gltf/Charging.jpg');
-                        //   texture.flipY = false;
-                        //   child.material.map = texture;
-                        //child.material.envMap = envMap;
-                    }
+                                if (child.isMesh) {
+                                    //   var texture = THREE.ImageUtils.loadTexture('./gltf/Charging.jpg');
+                                    //   texture.flipY = false;
+                                    //   child.material.map = texture;
+                                    //child.material.envMap = envMap;
+                                }
 
-                });
+                            });
 
-                scene.add(gltf.scene);
+                            scene.add(gltf.scene);
 
-                mixer = new THREE.AnimationMixer(gltf.scene);
-                //mixer.clipAction( gltf.animations[ 0 ])
-                mixer.clipAction(gltf.animations[0]).loop = THREE.LoopOnce;
-                //  mixer.clipAction(gltf.animations[0]).play();
+                            mixer = new THREE.AnimationMixer(gltf.scene);
+                            //mixer.clipAction( gltf.animations[ 0 ])
+                            mixer.clipAction(gltf.animations[0]).loop = THREE.LoopOnce;
+                            //  mixer.clipAction(gltf.animations[0]).play();
 
-            });
-*/
+                        });
+            */
 
             renderer = new THREE.WebGLRenderer({
                 antialias: true
@@ -190,11 +191,11 @@
                 case 65:
                     /*a*/
                     h = 1;
-                    hw_continuousMove(1,0,0,data=>{
-                        console.log(data.position.x*180);
-                         gotoHomePosition();
-                         rotDeltaByworldY(-data.position.x*180);
-                        
+                    hw_continuousMove(1, 0, 0, data => {
+                        console.log(data.position.x * 180);
+                        gotoHomePosition();
+                        rotDeltaByworldY(-data.position.x * 180);
+
                     });
                     //rotDeltaByworldY(-1);
 
@@ -207,10 +208,10 @@
                 case 68:
                     /*d*/
                     h = -1;
-                    hw_continuousMove(-1,0,0,data=>{
-                        console.log(data.position.x*180);
+                    hw_continuousMove(-1, 0, 0, data => {
+                        console.log(data.position.x * 180);
                         gotoHomePosition();
-                        rotDeltaByworldY(-data.position.x*180);
+                        rotDeltaByworldY(-data.position.x * 180);
                     });
                     //rotDeltaByworldY(1);          
 
@@ -223,23 +224,25 @@
         }
 
         /*
-        * 水平转动
-        * degree -180~180
-        * 右手坐标系, 逆时针转动为正 
-        */
-        function rotDeltaByworldY(degree){
-               var quaternion= new THREE.Quaternion();
-               quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0), degInRad(degree));
-               camera.quaternion.multiplyQuaternions(quaternion, camera.quaternion);
-               console.log(eulerToAngle(quatToEuler(camera.quaternion).y))
+         * 水平转动
+         * degree -180~180
+         * 右手坐标系, 逆时针转动为正 
+         */
+        function rotDeltaByworldY(degree) {
+            // var quaternion = new THREE.Quaternion();
+            // quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), degInRad(degree));
+            // camera.quaternion.multiplyQuaternions(quaternion, camera.quaternion);
+
+            camera.rotateOnWorldAxis(new THREE.Vector3(0,1,0), degree);
+            console.log(eulerToAngle(quatToEuler(camera.quaternion).y))
 
         }
         /**
-        * 回到初始位置, POI tag0 默认为正北方向
-        */ 
-        function gotoHomePosition(){
-             camera.lookAt(new THREE.Vector3(POIs.tags[0].pos.x , POIs.tags[0].pos.y ,
-             POIs.tags[0].pos.z ));
+         * 回到初始位置, POI tag0 默认为正北方向
+         */
+        function gotoHomePosition() {
+            camera.lookAt(new THREE.Vector3(POIs.tags[0].pos.x, POIs.tags[0].pos.y,
+                POIs.tags[0].pos.z));
         }
 
         function onWindowResize() {
@@ -329,18 +332,22 @@
             let t1 = new Date(); //本次时间
             let t = t1 - t0; // 时间差
             if (onoff == 1) {
-                if (v != 0) {
-                    camera.rotateX(v * 0.001 * t / 3);
+                if (v != 0 && CONTROL_VCAM_DIRECT) {
+                    camera.rotateX(v * t * Math.PI/4000);
+                    console.log(eulerToAngle(quatToEuler(camera.quaternion).x))
                 }
-                if (h != 0) {
+                if (h != 0 && CONTROL_VCAM_DIRECT) {
 
                     //  camera.rotateY(h * 0.001 * t / 3);
-                //    camera.rotateOnAxis(new THREE.Vector3(0, 1, 0),h* degInRad(0.5));
-                    // camera.lookAt(scene.position);
+                    //  camera.rotateOnAxis(new THREE.Vector3(0, 1, 0),h* degInRad(0.5));
+                    //  camera.lookAt(scene.position);
 
-                     var quaternion= new THREE.Quaternion();
-                     quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0), h*t*Math.PI/2000);
-                     camera.quaternion.multiplyQuaternions(quaternion, camera.quaternion);
+                    // var quaternion = new THREE.Quaternion();
+                    // quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), h * t * Math.PI / 2000);
+                    // camera.quaternion.multiplyQuaternions(quaternion, camera.quaternion);
+                    camera.rotateOnWorldAxis(new THREE.Vector3(0,1,0), h*t*Math.PI/2000);
+                    console.log(eulerToAngle(quatToEuler(camera.quaternion).y))
+
                 }
 
             }
@@ -385,7 +392,7 @@
         function addPOI(poi_array) {
 
             const SCALE = 1;
-            camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.25, 8000);
+            camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.25, 8000);
             var poi_cam = POIs.cameras[0];
 
             camera.position.set(poi_cam.pos.x / SCALE, poi_cam.pos.y / SCALE, poi_cam.pos.z / SCALE);
